@@ -10,8 +10,6 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-7-blue.svg)](https://www.typescriptlang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-> **kelyk** (*kelyk*) — Yakutian (Sakha) for "(noch zu bestätigen)"
-
 A zero-dependency async queue with **strict ordering per key** and **parallelism across keys**,
 plus a global concurrency limit, timeouts, `AbortSignal` support and automatic cleanup of idle keys.
 
