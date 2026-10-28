@@ -1,6 +1,6 @@
 {
 	"name": "@yedoma-labs/kelyk-queue",
-	"version": "0.0.0",
+	"version": "1.0.0",
 	"description": "Zero-dependency keyed async queue: strict FIFO per key, parallel across keys, with a global concurrency limit, timeouts and AbortSignal support",
 	"type": "module",
 	"main": "./dist/index.cjs",
