@@ -1,0 +1,88 @@
+{
+	"name": "@yedoma-labs/kelyk-queue",
+	"version": "0.0.0",
+	"description": "Zero-dependency keyed async queue: strict FIFO per key, parallel across keys, with a global concurrency limit, timeouts and AbortSignal support",
+	"type": "module",
+	"main": "./dist/index.cjs",
+	"module": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"import": {
+				"types": "./dist/index.d.ts",
+				"default": "./dist/index.js"
+			},
+			"require": {
+				"types": "./dist/index.d.cts",
+				"default": "./dist/index.cjs"
+			}
+		}
+	},
+	"files": [
+		"dist"
+	],
+	"engines": {
+		"node": ">=20"
+	},
+	"packageManager": "pnpm@12.15.0",
+	"scripts": {
+		"build": "tsdown",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"test:coverage": "vitest run --coverage",
+		"lint": "biome check src tests",
+		"lint:fix": "biome check --write src tests",
+		"format": "biome format --write src tests",
+		"typecheck": "tsc --noEmit",
+		"prepublishOnly": "pnpm run build"
+	},
+	"keywords": [
+		"queue",
+		"async",
+		"keyed",
+		"mutex",
+		"concurrency",
+		"serial",
+		"per-key",
+		"ordering",
+		"abort-signal",
+		"timeout"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/yedoma-labs/kelyk-queue"
+	},
+	"author": "",
+	"license": "MIT",
+	"simple-git-hooks": {
+		"pre-commit": "pnpm exec lint-staged",
+		"pre-push": "pnpm run typecheck && pnpm run test",
+		"commit-msg": "pnpm exec commitlint --edit $1"
+	},
+	"lint-staged": {
+		"*.ts": [
+			"biome check --write"
+		]
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.6.3",
+		"@commitlint/cli": "^21.2.4",
+		"@commitlint/config-conventional": "^21.2.4",
+		"@semantic-release/changelog": "^7.0.0",
+		"@semantic-release/commit-analyzer": "^13.0.1",
+		"@semantic-release/exec": "^7.1.0",
+		"@semantic-release/git": "^11.0.1",
+		"@semantic-release/github": "^12.0.10",
+		"@semantic-release/npm": "^13.2.0",
+		"@semantic-release/release-notes-generator": "^14.1.1",
+		"@types/node": "26.6.5",
+		"@typescript/typescript6": "^6.0.2",
+		"@vitest/coverage-v8": "^5.0.5",
+		"lint-staged": "^17.6.0",
+		"semantic-release": "^25.0.9",
+		"simple-git-hooks": "^2.14.0",
+		"tsdown": "^0.23.2",
+		"typescript": "7.0.2",
+		"vitest": "5.0.5"
+	}
+}
