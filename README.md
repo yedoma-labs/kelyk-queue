@@ -1,7 +1,21 @@
 # @yedoma-labs/kelyk-queue
 
-A small, zero-dependency async queue with **strict ordering per key** and **parallelism across keys**,
+<picture>
+  <source media="(max-width: 640px)" srcset="https://raw.githubusercontent.com/yedoma-labs/assets/main/resized/banner-resized-mobile.png">
+  <img src="https://raw.githubusercontent.com/yedoma-labs/assets/main/resized/banner-resized.png" alt="Project Header">
+</picture>
+
+[![CI](https://github.com/yedoma-labs/kelyk-queue/actions/workflows/ci.yml/badge.svg)](https://github.com/yedoma-labs/kelyk-queue/actions/workflows/ci.yml)
+[![npm version](https://img.shields.io/npm/v/@yedoma-labs/kelyk-queue.svg)](https://www.npmjs.com/package/@yedoma-labs/kelyk-queue)
+[![TypeScript](https://img.shields.io/badge/TypeScript-7-blue.svg)](https://www.typescriptlang.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+> **kelyk** (*kelyk*) — Yakutian (Sakha) for "(noch zu bestätigen)"
+
+A zero-dependency async queue with **strict ordering per key** and **parallelism across keys**,
 plus a global concurrency limit, timeouts, `AbortSignal` support and automatic cleanup of idle keys.
+
+---
 
 ## The problem
 
@@ -15,7 +29,7 @@ different orders, however, should run in parallel to keep throughput up.
 
 `kelyk-queue` covers the gap: FIFO per key, parallel across keys, bounded in total.
 
-## Install
+## Installation
 
 ```sh
 pnpm add @yedoma-labs/kelyk-queue
@@ -24,7 +38,7 @@ pnpm add @yedoma-labs/kelyk-queue
 Requires Node.js 20 or newer. The package uses only standard Web APIs (`AbortController`,
 `AbortSignal`, `setTimeout`, `queueMicrotask`), so it also runs on Bun and Deno.
 
-## Quickstart
+## Quick Start
 
 Updates to the same order run one after another. Updates to different orders run in parallel, at
 most 10 tasks at a time.
@@ -117,6 +131,8 @@ This queue is **process-local**. It is an in-memory structure.
 - Pending tasks are lost when the process exits.
 - There is no distributed lock. If you need ordering across instances, use a distributed lock
   per key, for example a Redis lock, and keep this queue for in-process concurrency control.
+
+---
 
 ## Development
 
