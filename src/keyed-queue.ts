@@ -81,8 +81,8 @@ export function createKeyedQueue(options: KeyedQueueOptions = {}): KeyedQueue {
 	const defaultTimeoutMs = validateTimeout("taskTimeoutMs", options.taskTimeoutMs);
 
 	const keys = new Map<string, KeyState>();
-	/** Keys that have waiting jobs and are not running. May contain stale entries; schedule() skips them. */
-	const ready: string[] = [];
+	/** Keys that have waiting jobs and are not running, in FIFO order. Each key appears at most once. */
+	const ready = new Set<string>();
 	let pending = 0;
 	let active = 0;
 	let closed = false;
@@ -154,8 +154,8 @@ export function createKeyedQueue(options: KeyedQueueOptions = {}): KeyedQueue {
 			state = { jobs: [], running: false };
 			keys.set(job.key, state);
 		}
-		if (!state.running && state.jobs.length === 0) {
-			ready.push(job.key);
+		if (!state.running) {
+			ready.add(job.key);
 		}
 		state.jobs.push(job);
 		pending++;
@@ -165,10 +165,12 @@ export function createKeyedQueue(options: KeyedQueueOptions = {}): KeyedQueue {
 	/** Starts waiting jobs of ready keys while there are free concurrency slots. */
 	function schedule(): void {
 		while (active < concurrency) {
-			const key = ready.shift();
-			if (key === undefined) {
+			const next = ready.values().next();
+			if (next.done) {
 				return;
 			}
+			const key = next.value;
+			ready.delete(key);
 			const state = keys.get(key);
 			if (!state || state.running) {
 				continue;
@@ -213,7 +215,7 @@ export function createKeyedQueue(options: KeyedQueueOptions = {}): KeyedQueue {
 		if (state) {
 			state.running = false;
 			if (state.jobs.length > 0) {
-				ready.push(job.key);
+				ready.add(job.key);
 			} else {
 				keys.delete(job.key);
 			}
@@ -259,6 +261,7 @@ export function createKeyedQueue(options: KeyedQueueOptions = {}): KeyedQueue {
 		}
 		if (!state.running && state.jobs.length === 0) {
 			keys.delete(job.key);
+			ready.delete(job.key);
 		}
 	}
 
@@ -306,7 +309,7 @@ export function createKeyedQueue(options: KeyedQueueOptions = {}): KeyedQueue {
 					keys.delete(key);
 				}
 			}
-			ready.length = 0;
+			ready.clear();
 			notifyIdle();
 		}
 		return waitForIdle();

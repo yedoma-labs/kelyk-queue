@@ -402,6 +402,30 @@ describe("memory", () => {
 		await blocker;
 		expect(queue.size()).toEqual({ keys: 0, pending: 0, active: 0 });
 	});
+
+	it("releases many aborted queued tasks without slowing down the queue", async () => {
+		const queue = createKeyedQueue({ concurrency: 1 });
+		const gate = deferred();
+		const blocker = queue.run("mem-many", () => gate.promise);
+
+		const aborted = Array.from({ length: 100_000 }, (_, index) => {
+			const controller = new AbortController();
+			const queued = queue.run(`mem-many-${index}`, async () => index, {
+				signal: controller.signal,
+			});
+			controller.abort();
+			return expectQueueError(queued, "ABORTED");
+		});
+		await Promise.all(aborted);
+		expect(queue.size()).toEqual({ keys: 1, pending: 0, active: 1 });
+
+		const started = performance.now();
+		gate.resolve();
+		await blocker;
+		await queue.run("mem-many-next", async () => "done");
+		expect(performance.now() - started).toBeLessThan(1_000);
+		expect(queue.size()).toEqual({ keys: 0, pending: 0, active: 0 });
+	}, 20_000);
 });
 
 describe("stress", () => {
